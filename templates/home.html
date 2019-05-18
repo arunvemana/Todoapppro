@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block title %}
+    home page
+{% endblock %}
+{% block style %}
+    .striker {
+    text-decoration : line-through;
+    }
+    body,html {height:100%;overflow:hidden;}
+body {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background: linear-gradient(to bottom, #6e529d 0%,#d97b93 100%);
+}
+background {
+
+  background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%,rgba(0,0,0,0.05) 100%);
+}
+{% endblock %}
+{% block content %}
+    <background xmlns="http://www.w3.org/1999/html"> </background>
+    <div class="container">
+    <form method="post">
+    {% csrf_token %}
+    {% if user.is_authenticated %}
+        <center><h2 style="margin-top: 30px;"> welcome {{ user.username }}</h2>
+                                        <a class="float-right " style="margin-right: 100px;color: whitesmoke"  href="{% url 'logout' %}">LOGOUT</a>
+
+            <span style="color: whitesmoke">Enter your task:-
+            <input name = "item" value="{{ form.item.value }}" placeholder="Enter your task"/></span>
+        <button type="submit">Add Item</button></center>
+        </form>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-warning alert-dismissable" role="alert">
+                    <button class="close" data-dismiss="alert">
+                        <small><sup>x</sup></small>
+                    </button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+         {% endif %}
+        {% if all_items %}
+            <div class="row">
+            {% for things in all_items %}
+                {% if things.completed %}
+                <div class="col-md-4">
+                  <div class="card bg-dark text-white">
+    <div class="card-body">
+            <div class="card-header striker">{{ things.item }}</div>
+            <div class="card-footer"><a href="{% url 'uncross' things.id %}">uncross</a></div>
+                <a href="delete/{{ things.id }}"><center>delete</center></a>
+    </div>
+                  </div><br>
+                </div>
+                {% else %}
+                 <div class="col-md-4">
+                  <div class="card bg-dark text-white">
+    <div class="card-body">
+            <div class="card-header">{{ things.item }}</div>
+        <div class="card-footer"><a  href="{% url 'cross_off' things.id %}">cross off</a></div>
+                <a href="delete/{{ things.id }}"><center>delete</center></a>
+    </div>
+                  </div><br>
+                </div>
+                {% endif %}
+
+            {% endfor %}
+            </div>
+         {% endif %}
+     {% else %}
+<div class="row" style="margin-top: 20%; margin-left: 30%">
+<div class="card bg-dark">
+        <h2 class="card-header" style="color: whitesmoke">You haven't login yet! </h2>
+        <center><a href="{% url 'login' %}" style="color: whitesmoke">LOGIN</a></center>
+
+       <center><a class="card-text" style="color: whitesmoke">Not yet Register?</a><a href="{% url 'signup'%}" style="color: indianred">SIGN UP</a></center>
+</div>
+</div>
+    {% endif%}
+    </div>
+{% endblock %}
